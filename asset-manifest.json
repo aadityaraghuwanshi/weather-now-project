@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/aadityaraghuwanshi/weather-app/static/css/main.57d84222.css",
+    "main.js": "/aadityaraghuwanshi/weather-app/static/js/main.88952fef.js",
+    "static/js/453.d42c39ee.chunk.js": "/aadityaraghuwanshi/weather-app/static/js/453.d42c39ee.chunk.js",
+    "index.html": "/aadityaraghuwanshi/weather-app/index.html",
+    "main.57d84222.css.map": "/aadityaraghuwanshi/weather-app/static/css/main.57d84222.css.map",
+    "main.88952fef.js.map": "/aadityaraghuwanshi/weather-app/static/js/main.88952fef.js.map",
+    "453.d42c39ee.chunk.js.map": "/aadityaraghuwanshi/weather-app/static/js/453.d42c39ee.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.57d84222.css",
+    "static/js/main.88952fef.js"
+  ]
+}
