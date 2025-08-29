@@ -1,13 +1,180 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* Reset + base */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --ring-width: 220px;   /* width of each card face */
+  --ring-height: 260px;  /* height of each card face */
+  --ring-depth: 400px;   /* how far cards sit from center */
+  --tilt: -16deg;        /* X tilt of the whole ring */
+  --stop-dur: 2s;        /* stop/face animation duration */
+  --shadow: 0 10px 25px rgba(0,0,0,0.18);
+  --radius: 14px;
+  --font: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+body { background: #f5f3f7; font-family: var(--font); overflow: hidden; }
+
+.page {
+  width: 100%;
+  height: 100vh;
+  position: relative;
+}
+
+/* ===== 3D Rotating Ring ===== */
+
+.slider {
+  position: absolute;
+  width: var(--ring-width);
+  height: var(--ring-height);
+  top: 12%;
+  left: 50%;
+  transform-style: preserve-3d;
+  transform: perspective(1000px) rotateX(var(--tilt)) rotateY(0deg);
+  translate: -50% 0;
+  z-index: 2;
+}
+
+/* Continuous rotation (default) */
+@keyframes spin {
+  from { transform: perspective(1000px) rotateX(var(--tilt)) rotateY(0deg); }
+  to   { transform: perspective(1000px) rotateX(var(--tilt)) rotateY(360deg); }
+}
+.slider.autoRun { animation: spin 20s linear infinite; }
+
+/* Stop and face the chosen item smoothly
+   - angle per slot = 360 / quantity
+   - 0-based index => rotateY( -index * angle )
+*/
+.slider.stopped {
+  --angle: calc(360deg / var(--quantity));
+  transition: transform var(--stop-dur) ease-in-out;
+  transform: perspective(1000px) rotateX(var(--tilt))
+             rotateY(calc(var(--stopIndex) * var(--angle) * -1));
+}
+
+/* Each face around the ring */
+.item {
+  position: absolute;
+  inset: 0;
+  transform:
+    rotateY(calc((var(--position) - 1) * (360deg / var(--quantity))))
+    translateZ(var(--ring-depth));
+}
+
+/* ===== Card Styles (no external images) ===== */
+
+.card {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  display: grid;
+  place-items: center;
+  position: relative;
+  overflow: hidden;
+  padding: 10px;
+  text-align: center;
+}
+
+.card-emoji { font-size: 3rem; line-height: 1; }
+.card-label { font-weight: 700; margin-top: 6px; }
+
+/* Gradient themes for each condition */
+.card--clear {
+  background: linear-gradient(180deg, #FFE082, #FFF8E1);
+  color: #5d4a00;
+}
+.card--cloudy {
+  background: linear-gradient(180deg, #c7d0df, #e2e6ee);
+  color: #334155;
+}
+.card--fog {
+  background: linear-gradient(180deg, #d9d9d9, #f1f1f1);
+  color: #374151;
+}
+.card--drizzle {
+  background: linear-gradient(180deg, #b7d4ff, #e0ecff);
+  color: #1f3b63;
+}
+.card--rain {
+  background: linear-gradient(180deg, #6fa9c3, #8ec1d6);
+  color: #0b2d3d;
+}
+.card--snow {
+  background: linear-gradient(180deg, #f0f8ff, #ffffff);
+  color: #1f2937;
+}
+.card--thunderstorm {
+  background: linear-gradient(180deg, #4e4e4e, #2f2f2f);
+  color: #f5f5f5;
+}
+
+/* Weather details shown only on the selected card */
+.selected-info {
+  position: absolute;
+  inset: auto 10px 10px 10px;
+  background: rgba(255,255,255,0.85);
+  color: #111827;
+  padding: 10px 12px;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+  animation: fadeIn 400ms ease both;
+}
+.selected-info h3 { font-size: 1rem; margin-bottom: 4px; }
+.selected-info .big { font-size: 1rem; font-weight: 700; margin: 4px 0; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== Search Bar ===== */
+
+.search-box {
+  position: absolute;
+  bottom: 50px;
+  left: 50%;
+  translate: -50% 0;
+  display: flex;
+  gap: 10px;
+  background: #ffffffcc;
+  padding: 10px 12px;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(4px);
+}
+
+.search-box input {
+  padding: 10px 12px;
+  font-size: 16px;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  min-width: 240px;
+  outline: none;
+}
+
+.search-box button {
+  padding: 10px 14px;
+  font-size: 16px;
+  border: none;
+  border-radius: 10px;
+  background: #25283b;
+  color: white;
+  cursor: pointer;
+}
+
+.search-box button.ghost {
+  background: transparent;
+  color: #111827;
+  border: 1px solid #cbd5e1;
+}
+
+/* ===== Responsive tweaks ===== */
+@media (max-width: 768px) {
+  :root {
+    --ring-width: 160px;
+    --ring-height: 200px;
+    --ring-depth: 320px;
+  }
+  .search-box { bottom: 24px; }
 }
